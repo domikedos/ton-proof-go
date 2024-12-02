@@ -1,5 +1,11 @@
 package model
 
+type ProofConfig struct {
+	Secret   string
+	Domain   string
+	ProofTTL int64
+}
+
 type Domain struct {
 	LengthBytes uint32 `json:"lengthBytes"`
 	Value       string `json:"value"`
