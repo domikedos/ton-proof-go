@@ -4,6 +4,7 @@ type ProofConfig struct {
 	Secret   string
 	Domain   string
 	ProofTTL int64
+	TonProof TonProof
 }
 
 type Domain struct {
