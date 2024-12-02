@@ -13,23 +13,23 @@ type ProofConfig struct {
 }
 
 type Domain struct {
-	LengthBytes uint32 `json:"lengthBytes"`
-	Value       string `json:"value"`
+	LengthBytes uint32
+	Value       string
 }
 
 type Proof struct {
-	Timestamp int64  `json:"timestamp"`
-	Domain    Domain `json:"domain"`
-	Signature string `json:"signature"`
-	Payload   string `json:"payload"`
-	StateInit string `json:"state_init"`
+	Timestamp int64
+	Domain    Domain
+	Signature string
+	Payload   string
+	StateInit string
 }
 
 type TonProof struct {
-	Address   string `json:"address"`
-	Network   string `json:"network"`
-	PublicKey string `json:"public_key"`
-	Proof     Proof  `json:"proof"`
+	Address   string
+	Network   string
+	PublicKey string
+	Proof     Proof
 }
 
 type JWTToken struct {
