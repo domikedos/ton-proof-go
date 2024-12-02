@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func GeneratePayload(config *model.ProofConfig) (*model.Payload, error) {
+func GeneratePayload(config *model.PayloadConfig) (*model.Payload, error) {
 	payload := make([]byte, 16, 48)
 	_, err := rand.Read(payload[:8])
 	if err != nil {
