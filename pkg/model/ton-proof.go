@@ -19,3 +19,7 @@ type TonProof struct {
 	PublicKey string `json:"public_key"`
 	Proof     Proof  `json:"proof"`
 }
+
+type JWTToken struct {
+	Token string
+}
