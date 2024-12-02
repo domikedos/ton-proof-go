@@ -1,11 +1,15 @@
 package model
 
-type ProofConfig struct {
+type PayloadConfig struct {
 	Secret     string
-	Domain     string
-	ProofTTL   int64
 	PayloadTTL int64
-	TonProof   TonProof
+}
+
+type ProofConfig struct {
+	Secret   string
+	Domain   string
+	ProofTTL int64
+	TonProof TonProof
 }
 
 type Domain struct {
