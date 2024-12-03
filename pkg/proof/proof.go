@@ -43,10 +43,10 @@ type claims struct {
 	jwt.StandardClaims
 }
 
-func Proof(config *model.ProofConfig) (*model.JWTToken, error) {
-	err := checkPayload(config.TonProof.Proof.Payload, config.Secret)
+func Proof(config *model.TonProofConfig) (*model.JWTToken, error) {
+	err := checkPayload(config.Proof.Payload, config.Secret)
 
-	message, err := convertTonProofMessage(&config.TonProof)
+	message, err := convertTonProofMessage(config)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func Proof(config *model.ProofConfig) (*model.JWTToken, error) {
 		return nil, err
 	}
 
-	check, err := checkProof(config.ProofTTL, config.Domain, addr.ID, message)
+	check, err := checkProof(config.ProofTTL, config.Domain.Value, addr.ID, message)
 	if err != nil {
 		return nil, err
 	}
@@ -83,27 +83,27 @@ func Proof(config *model.ProofConfig) (*model.JWTToken, error) {
 	return response, nil
 }
 
-func convertTonProofMessage(tonProof *model.TonProof) (*parsedMessage, error) {
-	addr, err := tongo.ParseAddress(tonProof.Address)
+func convertTonProofMessage(config *model.TonProofConfig) (*parsedMessage, error) {
+	addr, err := tongo.ParseAddress(config.Address)
 	if err != nil {
 		return nil, err
 	}
 
 	var msg parsedMessage
 
-	sig, err := base64.StdEncoding.DecodeString(tonProof.Proof.Signature)
+	sig, err := base64.StdEncoding.DecodeString(config.Signature)
 	if err != nil {
 		return nil, err
 	}
 
 	msg.Workchain = addr.ID.Workchain
 	msg.Address = addr.ID.Address[:]
-	msg.Domain = tonProof.Proof.Domain
-	msg.Timestamp = tonProof.Proof.Timestamp
+	msg.Domain = config.Domain
+	msg.Timestamp = config.Proof.Timestamp
 	msg.Signature = sig
-	msg.Payload = tonProof.Proof.Payload
-	msg.StateInit = tonProof.Proof.StateInit
-	msg.PublicKey = tonProof.PublicKey
+	msg.Payload = config.Proof.Payload
+	msg.StateInit = config.Proof.StateInit
+	msg.PublicKey = config.PublicKey
 
 	return &msg, nil
 }
