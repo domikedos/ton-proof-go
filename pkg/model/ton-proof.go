@@ -33,9 +33,9 @@ type TonProof struct {
 }
 
 type JWTToken struct {
-	Token string
+	Token string `json:"token"`
 }
 
 type Payload struct {
-	Payload string
+	Payload string `json:"payload"`
 }
