@@ -9,7 +9,6 @@ type ProofConfig struct {
 	Secret   string
 	Domain   string
 	ProofTTL int64
-	TonProof TonProof
 }
 
 type Domain struct {
@@ -19,7 +18,6 @@ type Domain struct {
 
 type Proof struct {
 	Timestamp int64
-	Domain    Domain
 	Signature string
 	Payload   string
 	StateInit string
@@ -29,7 +27,13 @@ type TonProof struct {
 	Address   string
 	Network   string
 	PublicKey string
-	Proof     Proof
+}
+
+type TonProofConfig struct {
+	ProofConfig
+	TonProof
+	Proof
+	Domain
 }
 
 type JWTToken struct {
