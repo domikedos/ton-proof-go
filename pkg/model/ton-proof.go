@@ -10,7 +10,7 @@ type ProofConfig struct {
 	Domain     string
 	ProofTTL   int64
 	JWTExpDays int
-	TonProof   TonProof
+	TonProof   TonProofRequest
 }
 
 type Domain struct {
@@ -26,7 +26,7 @@ type Proof struct {
 	StateInit string `json:"stateInit"`
 }
 
-type TonProof struct {
+type TonProofRequest struct {
 	Address   string `json:"address"`
 	Network   string `json:"network"`
 	PublicKey string `json:"publicKey"`
