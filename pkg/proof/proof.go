@@ -43,8 +43,8 @@ type claims struct {
 	jwt.StandardClaims
 }
 
-func Proof(config *model.TonProofConfig) (*model.JWTToken, error) {
-	err := checkPayload(config.Proof.Payload, config.Secret)
+func Proof(config *model.ProofConfig) (*model.JWTToken, error) {
+	err := checkPayload(config.TonProof.Proof.Payload, config.Secret)
 
 	message, err := convertTonProofMessage(config)
 	if err != nil {
@@ -56,18 +56,18 @@ func Proof(config *model.TonProofConfig) (*model.JWTToken, error) {
 		return nil, err
 	}
 
-	check, err := checkProof(config.ProofTTL, config.Domain.Value, addr.ID, message)
+	check, err := checkProof(config.ProofTTL, config.TonProof.Proof.Domain.Value, addr.ID, message)
 	if err != nil {
 		return nil, err
 	}
 	if !check {
 		return nil, fmt.Errorf("proof verification failed")
 	}
-	// TODO: add to config days
+
 	jwtClaims := &claims{
 		Address: config.TonProof.Address,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().AddDate(0, 0, 7).Unix(),
+			ExpiresAt: time.Now().AddDate(0, 0, config.JWTExpDays).Unix(),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtClaims)
@@ -83,27 +83,27 @@ func Proof(config *model.TonProofConfig) (*model.JWTToken, error) {
 	return response, nil
 }
 
-func convertTonProofMessage(config *model.TonProofConfig) (*parsedMessage, error) {
-	addr, err := tongo.ParseAddress(config.Address)
+func convertTonProofMessage(config *model.ProofConfig) (*parsedMessage, error) {
+	addr, err := tongo.ParseAddress(config.TonProof.Address)
 	if err != nil {
 		return nil, err
 	}
 
 	var msg parsedMessage
 
-	sig, err := base64.StdEncoding.DecodeString(config.Signature)
+	sig, err := base64.StdEncoding.DecodeString(config.TonProof.Proof.Signature)
 	if err != nil {
 		return nil, err
 	}
 
 	msg.Workchain = addr.ID.Workchain
 	msg.Address = addr.ID.Address[:]
-	msg.Domain = config.Domain
-	msg.Timestamp = config.Proof.Timestamp
+	msg.Domain = config.TonProof.Proof.Domain
+	msg.Timestamp = config.TonProof.Proof.Timestamp
 	msg.Signature = sig
-	msg.Payload = config.Proof.Payload
-	msg.StateInit = config.Proof.StateInit
-	msg.PublicKey = config.PublicKey
+	msg.Payload = config.TonProof.Proof.Payload
+	msg.StateInit = config.TonProof.Proof.StateInit
+	msg.PublicKey = config.TonProof.PublicKey
 
 	return &msg, nil
 }

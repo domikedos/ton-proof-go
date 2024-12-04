@@ -6,34 +6,31 @@ type PayloadConfig struct {
 }
 
 type ProofConfig struct {
-	Secret   string
-	Domain   string
-	ProofTTL int64
+	Secret     string
+	Domain     string
+	ProofTTL   int64
+	JWTExpDays int
+	TonProof   TonProofRequest
 }
 
 type Domain struct {
-	LengthBytes uint32
-	Value       string
+	LengthBytes uint32 `json:"lengthBytes"`
+	Value       string `json:"value"`
 }
 
 type Proof struct {
-	Timestamp int64
-	Signature string
-	Payload   string
-	StateInit string
+	Timestamp int64  `json:"timestamp"`
+	Domain    Domain `json:"domain"`
+	Signature string `json:"signature"`
+	Payload   string `json:"payload"`
+	StateInit string `json:"stateInit"`
 }
 
-type TonProof struct {
-	Address   string
-	Network   string
-	PublicKey string
-}
-
-type TonProofConfig struct {
-	ProofConfig
-	TonProof
-	Proof
-	Domain
+type TonProofRequest struct {
+	Address   string `json:"address"`
+	Network   string `json:"network"`
+	PublicKey string `json:"publicKey"`
+	Proof     Proof  `json:"proof"`
 }
 
 type JWTToken struct {
