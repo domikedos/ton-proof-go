@@ -9,7 +9,7 @@ type ProofConfig struct {
 	Secret     string
 	Domain     string
 	ProofTTL   int64
-	JWTExpDays int64
+	JWTExpDays int
 	TonProof   TonProof
 }
 
