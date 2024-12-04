@@ -39,7 +39,7 @@ type parsedMessage struct {
 }
 
 type claims struct {
-	Address string
+	Address string `json:"address"`
 	jwt.StandardClaims
 }
 
