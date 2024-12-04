@@ -43,20 +43,20 @@ type claims struct {
 	jwt.StandardClaims
 }
 
-func Proof(config *model.ProofConfig, tonProof *model.TonProof) (*model.JWTToken, error) {
-	err := checkPayload(tonProof.Proof.Payload, secret)
+func Proof(config *model.TonProofConfig) (*model.JWTToken, error) {
+	err := checkPayload(config.Proof.Payload, config.Secret)
 
-	message, err := convertTonProofMessage(tonProof)
+	message, err := convertTonProofMessage(config)
 	if err != nil {
 		return nil, err
 	}
 
-	addr, err := tongo.ParseAddress(tonProof.Address)
+	addr, err := tongo.ParseAddress(config.TonProof.Address)
 	if err != nil {
 		return nil, err
 	}
 
-	check, err := checkProof(domain, addr.ID, message)
+	check, err := checkProof(config.ProofTTL, config.Domain.Value, addr.ID, message)
 	if err != nil {
 		return nil, err
 	}
@@ -65,14 +65,14 @@ func Proof(config *model.ProofConfig, tonProof *model.TonProof) (*model.JWTToken
 	}
 	// TODO: add to config days
 	jwtClaims := &claims{
-		Address: tonProof.Address,
+		Address: config.TonProof.Address,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().AddDate(0, 0, 7).Unix(),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtClaims)
 
-	jwtToken, err := token.SignedString([]byte(secret))
+	jwtToken, err := token.SignedString([]byte(config.Secret))
 	if err != nil {
 		return nil, err
 	}
@@ -83,27 +83,27 @@ func Proof(config *model.ProofConfig, tonProof *model.TonProof) (*model.JWTToken
 	return response, nil
 }
 
-func convertTonProofMessage(tonProof *model.TonProof) (*parsedMessage, error) {
-	addr, err := tongo.ParseAddress(tonProof.Address)
+func convertTonProofMessage(config *model.TonProofConfig) (*parsedMessage, error) {
+	addr, err := tongo.ParseAddress(config.Address)
 	if err != nil {
 		return nil, err
 	}
 
 	var msg parsedMessage
 
-	sig, err := base64.StdEncoding.DecodeString(tonProof.Proof.Signature)
+	sig, err := base64.StdEncoding.DecodeString(config.Signature)
 	if err != nil {
 		return nil, err
 	}
 
 	msg.Workchain = addr.ID.Workchain
 	msg.Address = addr.ID.Address[:]
-	msg.Domain = tonProof.Proof.Domain
-	msg.Timestamp = tonProof.Proof.Timestamp
+	msg.Domain = config.Domain
+	msg.Timestamp = config.Proof.Timestamp
 	msg.Signature = sig
-	msg.Payload = tonProof.Proof.Payload
-	msg.StateInit = tonProof.Proof.StateInit
-	msg.PublicKey = tonProof.PublicKey
+	msg.Payload = config.Proof.Payload
+	msg.StateInit = config.Proof.StateInit
+	msg.PublicKey = config.PublicKey
 
 	return &msg, nil
 }
@@ -139,7 +139,7 @@ func createMessage(msg *parsedMessage) ([]byte, error) {
 	return res[:], nil
 }
 
-func checkProof(domain string, address tongo.AccountID, msg *parsedMessage) (bool, error) {
+func checkProof(proofTTL int64, domain string, address tongo.AccountID, msg *parsedMessage) (bool, error) {
 	pubKey, err := getWalletPubKey(msg.PublicKey)
 	if err != nil {
 		if msg.StateInit != "" {
@@ -156,7 +156,7 @@ func checkProof(domain string, address tongo.AccountID, msg *parsedMessage) (boo
 		}
 	}
 
-	if time.Now().After(time.Unix(msg.Timestamp, 0).Add(time.Duration(s.SharedSecrets.ProofTTL) * time.Second)) {
+	if time.Now().After(time.Unix(msg.Timestamp, 0).Add(time.Duration(proofTTL) * time.Second)) {
 		return false, fmt.Errorf("proof has been expired")
 	}
 

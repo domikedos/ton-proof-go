@@ -1,5 +1,10 @@
 package model
 
+type PayloadConfig struct {
+	Secret     string
+	PayloadTTL int64
+}
+
 type ProofConfig struct {
 	Secret   string
 	Domain   string
@@ -8,25 +13,34 @@ type ProofConfig struct {
 }
 
 type Domain struct {
-	LengthBytes uint32 `json:"lengthBytes"`
-	Value       string `json:"value"`
+	LengthBytes uint32
+	Value       string
 }
 
 type Proof struct {
-	Timestamp int64  `json:"timestamp"`
-	Domain    Domain `json:"domain"`
-	Signature string `json:"signature"`
-	Payload   string `json:"payload"`
-	StateInit string `json:"state_init"`
+	Timestamp int64
+	Signature string
+	Payload   string
+	StateInit string
 }
 
 type TonProof struct {
-	Address   string `json:"address"`
-	Network   string `json:"network"`
-	PublicKey string `json:"public_key"`
-	Proof     Proof  `json:"proof"`
+	Address   string
+	Network   string
+	PublicKey string
+}
+
+type TonProofConfig struct {
+	ProofConfig
+	TonProof
+	Proof
+	Domain
 }
 
 type JWTToken struct {
-	Token string
+	Token string `json:"token"`
+}
+
+type Payload struct {
+	Payload string `json:"payload"`
 }
