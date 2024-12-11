@@ -11,7 +11,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/domikedos/ton-proof-go/pkg/model"
-	"github.com/golang-jwt/jwt"
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
@@ -36,11 +35,6 @@ type parsedMessage struct {
 	Payload   string
 	StateInit string
 	PublicKey string
-}
-
-type claims struct {
-	Address string `json:"address"`
-	jwt.StandardClaims
 }
 
 func Proof(config *model.ProofConfig) error {
