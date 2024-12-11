@@ -15,15 +15,15 @@ To generate payload use proof.GeneratePayload(config *model.PayloadConfig) metho
 Example of model.PayloadConfig:
 ```go
 &model.PayloadConfig{
-    Secret: "your secret",
-	PayloadTTL: "time to live for payload",
+  Secret: "your secret",
+  PayloadTTL: "time to live for payload",
 }
 ```
 
 As response, you'll get the following object model.Payload:
 ```go
 Payload{
-	Payload: "payload"
+  Payload: "payload"
 }
 ```
 
@@ -51,12 +51,11 @@ To check proof use proof.Proof(config *model.ProofConfig) method.
 Example of ProofConfig:
 ```go
 &model.ProofConfig{
-    Secret: "your secret",
+  Secret: "your secret",
 	Domain: "your-domain.com",
 	ProofTTL: "time to live for proof",
-    TonProof: "your body",
+  TonProof: "your body",
 }
 ```
 
 As response, you'll get nil if proof checked successfully and error otherwise
-
