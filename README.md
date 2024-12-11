@@ -52,19 +52,10 @@ Example of ProofConfig:
 ```go
 &model.ProofConfig{
   Secret: "your secret",
-  Domain: "your-domain.com",
-  ProofTTL: "time to live for proof",
-  JwtExpDays: 7,
+	Domain: "your-domain.com",
+	ProofTTL: "time to live for proof",
   TonProof: "your body",
 }
 ```
 
-As response, you'll get the following object model.JWTToken:
-```go
-JWTToken{
-  Token: "jwt token"
-}
-```
-
-JWT token stores wallet's "Address" and "expAt"
-
+As response, you'll get nil if proof checked successfully and error otherwise
