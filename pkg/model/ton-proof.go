@@ -6,11 +6,10 @@ type PayloadConfig struct {
 }
 
 type ProofConfig struct {
-	Secret     string
-	Domain     string
-	ProofTTL   int64
-	JWTExpDays int
-	TonProof   TonProofRequest
+	Secret   string
+	Domain   string
+	ProofTTL int64
+	TonProof TonProofRequest
 }
 
 type Domain struct {

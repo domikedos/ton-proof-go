@@ -43,44 +43,28 @@ type claims struct {
 	jwt.StandardClaims
 }
 
-func Proof(config *model.ProofConfig) (*model.JWTToken, error) {
+func Proof(config *model.ProofConfig) error {
 	err := checkPayload(config.TonProof.Proof.Payload, config.Secret)
 
 	message, err := convertTonProofMessage(config)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	addr, err := tongo.ParseAddress(config.TonProof.Address)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	check, err := checkProof(config.ProofTTL, config.TonProof.Proof.Domain.Value, addr.ID, message)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if !check {
-		return nil, fmt.Errorf("proof verification failed")
+		return fmt.Errorf("proof verification failed")
 	}
 
-	jwtClaims := &claims{
-		Address: config.TonProof.Address,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().AddDate(0, 0, config.JWTExpDays).Unix(),
-		},
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtClaims)
-
-	jwtToken, err := token.SignedString([]byte(config.Secret))
-	if err != nil {
-		return nil, err
-	}
-
-	response := &model.JWTToken{
-		Token: jwtToken,
-	}
-	return response, nil
+	return nil
 }
 
 func convertTonProofMessage(config *model.ProofConfig) (*parsedMessage, error) {
